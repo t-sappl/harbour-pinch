@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Generic open-ear earphone: hook around the ear, speaker pod in front. -->
+  <path d="M 46 110 C 22 92, 20 48, 42 28 C 60 12, 90 14, 100 36 C 104 46, 100 54, 94 60"
+        fill="none" stroke="#ffffff" stroke-width="12" stroke-linecap="round"/>
+  <ellipse cx="82" cy="72" rx="24" ry="18" fill="#ffffff" transform="rotate(-25 82 72)"/>
+</svg>

@@ -1,0 +1,11 @@
+# Build output (Sailfish SDK / Qt Creator)
+build-*/
+RPMS/
+*.o
+*.qm
+moc_*
+qrc_*
+Makefile*
+*.pro.user*
+# Desktop test binary of the protocol tests
+tests/protocol_test

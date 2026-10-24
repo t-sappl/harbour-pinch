@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Version=1.1
+X-Nemo-Application-Type=silica-qt5
+Icon=harbour-pinch
+Exec=harbour-pinch
+Name=Pinch
+Comment=Noise control for Nothing earbuds
+Comment[de]=Geräuschkontrolle für Nothing-Earbuds
+
+[X-Sailjail]
+Permissions=Bluetooth
+OrganizationName=org.sappl
+ApplicationName=harbour-pinch
