@@ -1,11 +1,11 @@
 # Pinch
 
 Companion app for Nothing earbuds on Sailfish OS: noise control, battery,
-gestures and the other settings of the Nothing X app
+gestures and the other settings of the Nothing X app.
 
 <p align="center">
-  <img src="screenshots/settings1.png" width="19%" alt="Settings">
-  <img src="screenshots/settings2.png" width="19%" alt="Settings">
+  <img src="screenshots/settings1.png" width="19%" alt="Main page: battery and noise control">
+  <img src="screenshots/settings2.png" width="19%" alt="ain page: controls, connection and tools">
   <img src="screenshots/gestures.png" width="19%" alt="Gesture control">
   <img src="screenshots/cover.png" width="19%" alt="Cover with noise control">
 </p>
@@ -56,7 +56,7 @@ the only supported models.
 | App cover (mode, battery, next mode) | 🔸 | ✅ | 🔸 |
 | Bass boost (5 levels) | – | ✅ | – |
 | Spatial audio | – | ✅ | – |
-| Super Mic | – |✅🔸 | – |
+| Super Mic | – |✅ | – |
 | In-ear detection | 🔸 | ✅ | – |
 | Low latency | 🔸 | 🔸 | 🔸 |
 | Gestures | 🔸 | ✅ | 🔸 |
