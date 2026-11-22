@@ -127,6 +127,12 @@ EarController::EarController(QObject *parent)
     , m_spatialAudio(false)
     , m_seenDual(false)
     , m_dualEnabled(false)
+    , m_seenEq(false)
+    , m_seenCustomEq(false)
+    , m_eqMode(nothing::EqBalanced)
+    , m_eqBass(0.0)
+    , m_eqMid(0.0)
+    , m_eqTreble(0.0)
     , m_dualPages(0)
     , m_retriesLeft(0)
     , m_watchdogTries(0)
@@ -640,6 +646,9 @@ void EarController::onChannelConnected()
 {
     qDebug() << "Control channel connected";
     m_connectTimeout.stop();
+    // A stale error from an earlier failed attempt (e.g. "not reachable")
+    // must not linger once the channel actually comes up.
+    setErrorString(QString());
     setState(Connected);
     m_ancSeen = false;
     requestAnc();
@@ -962,6 +971,16 @@ bool EarController::bassSpatialExclusive() const
     return modelinfo::bassSpatialExclusive(modelinfo::Base(m_modelBase));
 }
 
+bool EarController::hasEq() const
+{
+    return m_seenEq && maybe(m_modelBase, modelinfo::eq);
+}
+
+bool EarController::hasCustomEq() const
+{
+    return m_seenCustomEq && maybe(m_modelBase, modelinfo::customEq);
+}
+
 void EarController::queueRequest(quint16 command)
 {
     if (m_state != Connected || m_requestQueue.contains(command))
@@ -997,6 +1016,10 @@ void EarController::requestDeviceState()
         queueRequest(nothing::cmd::RequestSuperMic);
     if (maybe(base, modelinfo::dualConnection))
         queueRequest(nothing::cmd::RequestDualEnable);
+    if (maybe(base, modelinfo::eq))
+        queueRequest(nothing::cmd::RequestEq);
+    if (maybe(base, modelinfo::customEq))
+        queueRequest(nothing::cmd::RequestCustomEq);
     // Spatial audio cannot be read; the switch shows the last value set here.
     emit featuresChanged(); // spatial audio / fit test depend on Connected
 }
@@ -1006,6 +1029,7 @@ void EarController::resetFeatures()
     m_seenInEar = m_seenLatency = m_seenSuperMic = false;
     m_seenPersonalizedAnc = m_seenEnhancedBass = m_seenGestures = false;
     m_seenDual = false;
+    m_seenEq = m_seenCustomEq = false;
     m_gestures.clear();
     if (!m_dualDevices.isEmpty()) {
         m_dualDevices.clear();
@@ -1028,6 +1052,8 @@ bool EarController::handleFeaturePacket(const nothing::Packet &packet)
     bool on = false;
     std::vector<nothing::DualDevice> dualList;
     quint8 mac[6];
+    quint8 eqModeByte = 0;
+    nothing::CustomEq customEq;
     if (nothing::parseDualEnable(packet, on)) {
         m_seenDual = true;
         m_dualEnabled = on;
@@ -1084,6 +1110,14 @@ bool EarController::handleFeaturePacket(const nothing::Packet &packet)
     } else if (nothing::parsePersonalizedAnc(packet, on)) {
         m_seenPersonalizedAnc = true;
         m_personalizedAnc = on;
+    } else if (nothing::parseEq(packet, eqModeByte)) {
+        m_seenEq = true;
+        m_eqMode = eqModeByte;
+    } else if (nothing::parseCustomEq(packet, customEq)) {
+        m_seenCustomEq = true;
+        m_eqBass = customEq.bass;
+        m_eqMid = customEq.mid;
+        m_eqTreble = customEq.treble;
     } else {
         quint8 level = 0;
         if (nothing::parseEnhancedBass(packet, on, level)) {
@@ -1198,6 +1232,38 @@ void EarController::setSpatialAudio(bool enabled)
     m_spatialAudio = enabled;
     m_settings.setValue(KeySpatialAudio, enabled);
     emit featuresChanged();
+}
+
+void EarController::setEqMode(int mode)
+{
+    if (m_state != Connected)
+        return;
+    send(nothing::cmd::SetEq, nothing::setEqPayload(quint8(mode)));
+    m_eqMode = mode;
+    emit featuresChanged();
+    queueRequest(nothing::cmd::RequestEq);
+}
+
+void EarController::setCustomEq(qreal bass, qreal mid, qreal treble)
+{
+    if (m_state != Connected)
+        return;
+    nothing::CustomEq eq;
+    eq.bass = float(bass);
+    eq.mid = float(mid);
+    eq.treble = float(treble);
+    send(nothing::cmd::SetCustomEq, nothing::setCustomEqPayload(eq));
+    // Picking a custom value implies custom mode; the buds do not always
+    // echo the mode switch back, so set it here too.
+    if (m_eqMode != EqCustom)
+        send(nothing::cmd::SetEq, nothing::setEqPayload(nothing::EqCustom));
+    m_eqMode = EqCustom;
+    m_eqBass = bass;
+    m_eqMid = mid;
+    m_eqTreble = treble;
+    emit featuresChanged();
+    queueRequest(nothing::cmd::RequestCustomEq);
+    queueRequest(nothing::cmd::RequestEq);
 }
 
 QVariantList EarController::gestureTypes() const

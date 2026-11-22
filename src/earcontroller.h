@@ -33,7 +33,7 @@ class QDBusPendingCallWatcher;
 class EarController : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(ConnectionState AncMode AncStrength FormFactor FitState Side)
+    Q_ENUMS(ConnectionState AncMode AncStrength FormFactor FitState Side EqMode)
 
     Q_PROPERTY(int connectionState READ connectionState NOTIFY connectionStateChanged)
     Q_PROPERTY(bool hasDevice READ hasDevice NOTIFY deviceChanged)
@@ -69,6 +69,8 @@ class EarController : public QObject
     Q_PROPERTY(bool bassSpatialExclusive READ bassSpatialExclusive NOTIFY featuresChanged)
     Q_PROPERTY(bool hasDualConnection READ hasDualConnection NOTIFY featuresChanged)
     Q_PROPERTY(bool dualConnectionNeedsRestart READ dualConnectionNeedsRestart NOTIFY featuresChanged)
+    Q_PROPERTY(bool hasEq READ hasEq NOTIFY featuresChanged)
+    Q_PROPERTY(bool hasCustomEq READ hasCustomEq NOTIFY featuresChanged)
 
     // Feature states.
     Q_PROPERTY(bool inEarDetection READ inEarDetection NOTIFY featuresChanged)
@@ -81,6 +83,14 @@ class EarController : public QObject
     Q_PROPERTY(bool dualConnection READ dualConnection NOTIFY featuresChanged)
     // Remembered devices: [{ mac, name, self, connected }]
     Q_PROPERTY(QVariantList dualDevices READ dualDevices NOTIFY dualDevicesChanged)
+
+    // EQ: eqMode is one of EqMode; the custom values are only meaningful
+    // once eqMode == EqCustom, but are kept live so the sliders show the
+    // last known values as soon as that mode is picked.
+    Q_PROPERTY(int eqMode READ eqMode NOTIFY featuresChanged)
+    Q_PROPERTY(qreal eqBass READ eqBass NOTIFY featuresChanged)
+    Q_PROPERTY(qreal eqMid READ eqMid NOTIFY featuresChanged)
+    Q_PROPERTY(qreal eqTreble READ eqTreble NOTIFY featuresChanged)
 
     // Find my buds and the ear tip fit test.
     Q_PROPERTY(bool ringingLeft READ ringingLeft NOTIFY ringingChanged)
@@ -122,6 +132,15 @@ public:
         StrengthMid,
         StrengthHigh,
         StrengthAdaptive
+    };
+
+    // Same values as nothing::EqMode.
+    enum EqMode {
+        EqBalanced = 0,
+        EqVoice = 1,
+        EqTreble = 2,
+        EqBass = 3,
+        EqCustom = 5
     };
 
     // Same values as nothing::DeviceId.
@@ -177,6 +196,12 @@ public:
     bool dualConnectionNeedsRestart() const;
     bool dualConnection() const { return m_dualEnabled; }
     QVariantList dualDevices() const;
+    bool hasEq() const;
+    bool hasCustomEq() const;
+    int eqMode() const { return m_eqMode; }
+    qreal eqBass() const { return m_eqBass; }
+    qreal eqMid() const { return m_eqMid; }
+    qreal eqTreble() const { return m_eqTreble; }
 
     bool inEarDetection() const { return m_inEar; }
     bool lowLatency() const { return m_lowLatency; }
@@ -231,6 +256,8 @@ public:
     Q_INVOKABLE void setDualConnection(bool enabled);
     Q_INVOKABLE void refreshDualDevices();
     Q_INVOKABLE void setDualDeviceConnected(const QString &mac, bool connect);
+    Q_INVOKABLE void setEqMode(int mode);
+    Q_INVOKABLE void setCustomEq(qreal bass, qreal mid, qreal treble);
 
     // Gestures: side is Side, type a gesture type (2, 3, 7, 9).
     Q_INVOKABLE QVariantList gestureTypes() const;
@@ -376,6 +403,12 @@ private:
     bool m_spatialAudio;
     bool m_seenDual;
     bool m_dualEnabled;
+    bool m_seenEq;
+    bool m_seenCustomEq;
+    int m_eqMode;
+    qreal m_eqBass;
+    qreal m_eqMid;
+    qreal m_eqTreble;
 
     struct DualEntry {
         QByteArray mac; // 6 bytes, display order

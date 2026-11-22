@@ -188,6 +188,41 @@
     </message>
 </context>
 <context>
+    <name>EqPage</name>
+    <message>
+        <source>Equalizer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Voice</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Treble</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bass</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mid</source>
+        <translation type="unfinished">Mittel</translation>
+    </message>
+    <message>
+        <source>These earbuds did not answer the custom EQ request.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FindPage</name>
     <message>
         <source>Find my earbuds</source>
@@ -595,40 +630,75 @@
         <translation>Mikrofonmodus für Anrufe in lauter Umgebung.</translation>
     </message>
     <message>
-        <source>Tools</source>
-        <translation>Werkzeuge</translation>
+        <source>Equalizer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Voice</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Treble</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bass</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>More</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Find my earbuds, fit test, device info</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MorePage</name>
+    <message>
+        <source>More</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Find my earbuds</source>
-        <translation>Earbuds suchen</translation>
+        <translation type="unfinished">Earbuds suchen</translation>
     </message>
     <message>
         <source>Let an earbud play a loud sound</source>
-        <translation>Einen Earbud laut klingeln lassen</translation>
+        <translation type="unfinished">Einen Earbud laut klingeln lassen</translation>
     </message>
     <message>
         <source>Ear tip fit test</source>
-        <translation>Passform-Test</translation>
+        <translation type="unfinished">Passform-Test</translation>
     </message>
     <message>
         <source>Check whether the ear tips seal well</source>
-        <translation>Prüfen, ob die Aufsätze dicht sitzen</translation>
+        <translation type="unfinished">Prüfen, ob die Aufsätze dicht sitzen</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>Info</translation>
+        <translation type="unfinished">Info</translation>
     </message>
     <message>
         <source>Model</source>
-        <translation>Modell</translation>
+        <translation type="unfinished">Modell</translation>
     </message>
     <message>
         <source>Firmware</source>
-        <translation>Firmware</translation>
+        <translation type="unfinished">Firmware</translation>
     </message>
     <message>
         <source>Serial number</source>
-        <translation>Seriennummer</translation>
+        <translation type="unfinished">Seriennummer</translation>
     </message>
 </context>
 <context>

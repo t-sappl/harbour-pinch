@@ -188,6 +188,41 @@
     </message>
 </context>
 <context>
+    <name>EqPage</name>
+    <message>
+        <source>Equalizer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Voice</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Treble</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bass</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>These earbuds did not answer the custom EQ request.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FindPage</name>
     <message>
         <source>Find my earbuds</source>
@@ -595,7 +630,42 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tools</source>
+        <source>Equalizer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Voice</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Treble</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bass</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>More</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Find my earbuds, fit test, device info</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MorePage</name>
+    <message>
+        <source>More</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

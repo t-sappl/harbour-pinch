@@ -224,6 +224,42 @@ static void testDualConnection()
     CHECK(dualConnectPayload(mac, false) == std::vector<uint8_t>({ 0x00, 1, 2, 3, 4, 5, 6 }));
 }
 
+static void testEq()
+{
+    uint8_t mode = 9;
+    CHECK(parseEq(makePacket(resp::Eq, { EqBass }), mode) && mode == EqBass);
+    CHECK(setEqPayload(EqVoice) == std::vector<uint8_t>({ EqVoice, 0x00 }));
+    CHECK(!parseEq(makePacket(resp::AncPrimary, { EqBass }), mode)); // wrong command
+}
+
+static void testCustomEq()
+{
+    // Round trip: encode, then parse back from a packet built the way the
+    // real response would be (same payload the device would send).
+    CustomEq eq;
+    eq.bass = 3.0f;
+    eq.mid = -1.5f;
+    eq.treble = 2.0f;
+    std::vector<uint8_t> payload = setCustomEqPayload(eq);
+    CHECK(payload.size() == 53);
+    CHECK(payload[0] == 0x03); // band count
+
+    CustomEq parsed;
+    CHECK(parseCustomEq(makePacket(resp::CustomEq, payload), parsed));
+    CHECK(parsed.bass > 2.99f && parsed.bass < 3.01f);
+    CHECK(parsed.mid > -1.51f && parsed.mid < -1.49f);
+    CHECK(parsed.treble > 1.99f && parsed.treble < 2.01f);
+
+    // All-zero values still round trip (exercises the "total gain" zero case).
+    CustomEq zero;
+    std::vector<uint8_t> zeroPayload = setCustomEqPayload(zero);
+    CustomEq parsedZero;
+    CHECK(parseCustomEq(makePacket(resp::CustomEq, zeroPayload), parsedZero));
+    CHECK(parsedZero.bass == 0.0f && parsedZero.mid == 0.0f && parsedZero.treble == 0.0f);
+
+    CHECK(!parseCustomEq(makePacket(resp::Eq, payload), parsed)); // wrong command
+}
+
 int main()
 {
     testCrcKnownValue();
@@ -237,6 +273,8 @@ int main()
     testGestures();
     testFirmwareFitSerial();
     testDualConnection();
+    testEq();
+    testCustomEq();
     if (failures) {
         std::printf("%d check(s) failed\n", failures);
         return EXIT_FAILURE;

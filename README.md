@@ -5,7 +5,7 @@ gestures and the other settings of the Nothing X app.
 
 <p align="center">
   <img src="screenshots/settings1.png" width="19%" alt="Main page: battery and noise control">
-  <img src="screenshots/settings2.png" width="19%" alt="ain page: controls, connection and tools">
+  <img src="screenshots/settings2.png" width="19%" alt="Main page: controls, connection and tools">
   <img src="screenshots/gestures.png" width="19%" alt="Gesture control">
   <img src="screenshots/cover.png" width="19%" alt="Cover with noise control">
 </p>
@@ -21,6 +21,8 @@ gestures and the other settings of the Nothing X app.
   start) and opens the control channel as soon as they are connected
 - **Gestures** per side: double/triple pinch, pinch and hold, double pinch and
   hold – including which modes "noise control" switches between
+- **Equalizer:** presets (Balanced, Voice, Treble, Bass) or a custom
+  bass/mid/treble mix
 - **Find my earbuds:** let the left or right earbud ring
 - **Ear tip fit test**
 - **Dual connection:** switch it on or off and choose which remembered devices
@@ -54,6 +56,8 @@ the only supported models.
 | Personalized noise cancellation | 🔸 | ✅ | – |
 | Battery left, right, case | ✅ | ✅ | 🔸 |
 | App cover (mode, battery, next mode) | 🔸 | ✅ | 🔸 |
+| Equalizer presets (Balanced, Voice, Treble, Bass) | 🔸 | 🔸 | 🔸 |
+| Custom equalizer (bass/mid/treble sliders) | 🔸 | 🔸 | 🔸 |
 | Bass boost (5 levels) | – | ✅ | – |
 | Spatial audio | – | ✅ | – |
 | Super Mic | – |✅ | – |
@@ -128,6 +132,8 @@ Packets look like this (little endian):
 | Ring               | `0xF002` | `<side> <on>` |
 | Fit test           | `0xF014` | `01`, result `0xE00D` `<left> <right>` |
 | Dual connection    | `0xC027`, set `0xF01A` | `<on>`; devices `0xC028 <offset>` → `0x4028`, connect `0xF01B <on> <mac>` |
+| Equalizer preset   | `0xC01F`, set `0xF010` | `<mode>` (0 balanced, 1 voice, 2 treble, 3 bass, 5 custom) |
+| Custom equalizer   | `0xC044`, set `0xF041` | 3 bands (mid, treble, bass) as little-endian float32 |
 
 Battery ids: `02` left, `03` right, `04` case; level bit 7 = charging, bits 0–6 = percent.
 

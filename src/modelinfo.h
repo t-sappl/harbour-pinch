@@ -73,6 +73,11 @@ inline bool enhancedBass(Base b)    { return b == B173; }
 inline bool superMic(Base b)        { return b == B173; }
 inline bool spatialAudio(Base b)    { return b == B173; } // write-only, no read
 inline bool dualConnection(Base b)  { return b == B155 || b == B173 || b == B174; }
+// EQ presets (Balance/Voice/Treble/Bass); all three tested models answer.
+inline bool eq(Base b)              { Q_UNUSED(b); return true; }
+// Custom (3-band) EQ. Protocol code ported from earctl; not yet confirmed
+// on a real device, so only offered once the buds actually answer.
+inline bool customEq(Base b)        { Q_UNUSED(b); return true; }
 // Ear (2) restarts when dual connection is switched on or off.
 inline bool dualConnectionReboot(Base b) { return b == B155; }
 // Spatial audio and enhanced bass cannot be active at the same time.

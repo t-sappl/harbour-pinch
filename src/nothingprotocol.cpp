@@ -6,6 +6,7 @@
 #include "nothingprotocol.h"
 
 #include <algorithm>
+#include <cstring>
 
 namespace nothing {
 
@@ -382,6 +383,108 @@ std::vector<uint8_t> setSpatialAudioPayload(bool enabled)
 std::vector<uint8_t> ringPayload(uint8_t device, bool on)
 {
     return std::vector<uint8_t>{ device, static_cast<uint8_t>(on ? 0x01 : 0x00) };
+}
+
+bool parseEq(const Packet &packet, uint8_t &mode)
+{
+    if (packet.command != resp::Eq || packet.payload.empty())
+        return false;
+    mode = packet.payload[0];
+    return true;
+}
+
+std::vector<uint8_t> setEqPayload(uint8_t mode)
+{
+    return std::vector<uint8_t>{ mode, 0x00 };
+}
+
+namespace {
+// Custom EQ values are encoded as little-endian IEEE 754 floats, with one
+// quirk ported verbatim from earctl: while writing the packet's "total
+// gain" field, an exact zero is marked by setting the top bit of the last
+// (most significant, after the little-endian swap) byte instead of using
+// all-zero bytes. encodeEqFloat/decodeEqFloat keep that behaviour so the
+// packet matches what earctl sends, without claiming to know why the
+// firmware wants it that way.
+std::vector<uint8_t> encodeEqFloat(float value, bool isTotalGain)
+{
+    if (isTotalGain && value >= 0.0f)
+        return std::vector<uint8_t>{ 0x00, 0x00, 0x00, 0x80 };
+    uint32_t bits = 0;
+    std::memcpy(&bits, &value, sizeof(bits));
+    uint8_t b[4] = {
+        static_cast<uint8_t>((bits >> 24) & 0xFF),
+        static_cast<uint8_t>((bits >> 16) & 0xFF),
+        static_cast<uint8_t>((bits >> 8) & 0xFF),
+        static_cast<uint8_t>(bits & 0xFF)
+    };
+    if (value != 0.0f && b[0] == 0 && b[1] == 0 && b[2] == 0)
+        b[3] |= 0x80;
+    // Reverse big-endian -> little-endian for the wire.
+    return std::vector<uint8_t>{ b[3], b[2], b[1], b[0] };
+}
+
+float decodeEqFloat(const uint8_t *bytes)
+{
+    uint8_t s[4] = { bytes[3], bytes[2], bytes[1], bytes[0] };
+    bool negate = false;
+    if (s[0] == 0 && s[1] == 0 && s[2] == 0 && (s[3] & 0x80)) {
+        s[3] &= 0x7F;
+        negate = true;
+    }
+    const uint32_t bits = (static_cast<uint32_t>(s[0]) << 24) | (static_cast<uint32_t>(s[1]) << 16)
+                         | (static_cast<uint32_t>(s[2]) << 8) | static_cast<uint32_t>(s[3]);
+    float value = 0.0f;
+    std::memcpy(&value, &bits, sizeof(value));
+    return negate ? -value : value;
+}
+}
+
+bool parseCustomEq(const Packet &packet, CustomEq &eq)
+{
+    if (packet.command != resp::CustomEq || packet.payload.size() < 36)
+        return false;
+    // Layout: count(1) totalGain(4) then 3 bands of 13 bytes (filter type,
+    // gain as float, 8 bytes unused by us); band order on the wire is
+    // mid, treble, bass.
+    float bands[3];
+    for (int i = 0; i < 3; ++i) {
+        const size_t offset = 6 + static_cast<size_t>(i) * 13;
+        if (offset + 4 > packet.payload.size())
+            return false;
+        bands[i] = decodeEqFloat(&packet.payload[offset]);
+    }
+    eq.mid = bands[0];
+    eq.treble = bands[1];
+    eq.bass = bands[2];
+    return true;
+}
+
+std::vector<uint8_t> setCustomEqPayload(const CustomEq &eq)
+{
+    // Fixed packet template for a 3-band EQ, ported from earctl: filter
+    // type and a fixed frequency/Q per band; only the gain floats and the
+    // total-gain field below are replaced.
+    std::vector<uint8_t> payload{
+        0x03, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x75, 0x44, 0xc3,
+        0xf5, 0x28, 0x3f, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x5a, 0x45, 0x00, 0x00, 0x80,
+        0x3f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0c, 0x43, 0xcd, 0xcc, 0x4c, 0x3f, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
+    const float values[3] = { eq.mid, eq.treble, eq.bass };
+    float highest = 0.0f;
+    for (float v : values) {
+        const float a = v < 0.0f ? -v : v;
+        if (a > highest)
+            highest = a;
+    }
+    const std::vector<uint8_t> total = encodeEqFloat(-highest, true);
+    std::copy(total.begin(), total.end(), payload.begin() + 1);
+    for (int i = 0; i < 3; ++i) {
+        const std::vector<uint8_t> bytes = encodeEqFloat(values[i], false);
+        std::copy(bytes.begin(), bytes.end(), payload.begin() + 6 + i * 13);
+    }
+    return payload;
 }
 
 } // namespace nothing

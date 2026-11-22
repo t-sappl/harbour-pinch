@@ -114,24 +114,30 @@ Page {
             }
 
             Row {
+                // Like Nothing X: the case column only appears while the case
+                // reports a level (buds docked in an open case). Otherwise
+                // just two, wider columns for left/right.
+                id: batteryRow
                 visible: page.connected && ear.batterySingle < 0
                 x: Theme.horizontalPageMargin
                 width: parent.width - 2 * Theme.horizontalPageMargin
+                readonly property bool showCase: ear.batteryCase >= 0
 
                 BatteryItem {
-                    width: parent.width / 3
+                    width: batteryRow.width / (batteryRow.showCase ? 3 : 2)
                     label: qsTr("Left")
                     level: ear.batteryLeft
                     charging: ear.chargingLeft
                 }
                 BatteryItem {
-                    width: parent.width / 3
+                    width: batteryRow.width / (batteryRow.showCase ? 3 : 2)
                     label: qsTr("Right")
                     level: ear.batteryRight
                     charging: ear.chargingRight
                 }
                 BatteryItem {
-                    width: parent.width / 3
+                    visible: batteryRow.showCase
+                    width: batteryRow.width / 3
                     label: qsTr("Case")
                     level: ear.batteryCase
                     charging: ear.chargingCase
@@ -247,6 +253,17 @@ Page {
                 onClicked: ear.setSpatialAudio(!checked)
             }
 
+            NavItem {
+                visible: ear.hasEq
+                text: qsTr("Equalizer")
+                description: ear.eqMode === Ear.EqCustom ? qsTr("Custom")
+                             : ear.eqMode === Ear.EqVoice ? qsTr("Voice")
+                             : ear.eqMode === Ear.EqTreble ? qsTr("Treble")
+                             : ear.eqMode === Ear.EqBass ? qsTr("Bass")
+                             : qsTr("Balanced")
+                onClicked: pageStack.push(Qt.resolvedUrl("EqPage.qml"))
+            }
+
             // ----- Controls -----
             SectionHeader {
                 visible: ear.hasInEarDetection || ear.hasGestures
@@ -318,48 +335,12 @@ Page {
                 onClicked: ear.setSuperMic(!checked)
             }
 
-            // ----- Tools -----
-            SectionHeader {
-                visible: page.connected
-                text: qsTr("Tools")
-            }
-
+            // ----- More -----
             NavItem {
                 visible: page.connected
-                text: qsTr("Find my earbuds")
-                description: qsTr("Let an earbud play a loud sound")
-                onClicked: pageStack.push(Qt.resolvedUrl("FindPage.qml"))
-            }
-
-            NavItem {
-                visible: ear.hasFitTest
-                text: qsTr("Ear tip fit test")
-                description: qsTr("Check whether the ear tips seal well")
-                onClicked: pageStack.push(Qt.resolvedUrl("FitTestPage.qml"))
-            }
-
-            // ----- Info -----
-            SectionHeader {
-                visible: page.connected && (ear.firmwareVersion.length > 0 || ear.serialNumber.length > 0)
-                text: qsTr("Info")
-            }
-
-            DetailItem {
-                visible: page.connected && ear.detectedModel.length > 0
-                label: qsTr("Model")
-                value: ear.detectedModel
-            }
-
-            DetailItem {
-                visible: page.connected && ear.firmwareVersion.length > 0
-                label: qsTr("Firmware")
-                value: ear.firmwareVersion
-            }
-
-            DetailItem {
-                visible: page.connected && ear.serialNumber.length > 0
-                label: qsTr("Serial number")
-                value: ear.serialNumber
+                text: qsTr("More")
+                description: qsTr("Find my earbuds, fit test, device info")
+                onClicked: pageStack.push(Qt.resolvedUrl("MorePage.qml"))
             }
         }
 

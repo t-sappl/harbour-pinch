@@ -1,6 +1,6 @@
 Name:       harbour-pinch
 Summary:    Noise control for Nothing earbuds
-Version:    1.0.0
+Version:    1.1.0
 Release:    1
 License:    GPLv3+
 URL:        https://github.com/t-sappl/harbour-pinch
@@ -16,12 +16,13 @@ BuildRequires:  desktop-file-utils
 
 %description
 Pinch controls Nothing and CMF earbuds: noise control (off, transparency,
-noise cancellation with low, mid, high or adaptive strength), battery of both
-earbuds and the case, gestures, find my earbuds, ear tip fit test, dual
-connection, low latency, in-ear detection and – depending on the model – bass
-boost, spatial audio, Super Mic and personalized noise cancellation. Pinch
-only shows what the earbuds support. Developed with Ear (2), Ear (3) and
-Ear (open); other models should work too.
+noise cancellation with low, mid, high or adaptive strength), an equalizer
+(presets or a custom bass/mid/treble mix), battery of both earbuds and the
+case, gestures, find my earbuds, ear tip fit test, dual connection, low
+latency, in-ear detection and – depending on the model – bass boost, spatial
+audio, Super Mic and personalized noise cancellation. Pinch only shows what
+the earbuds support. Developed with Ear (2), Ear (3) and Ear (open); other
+models should work too.
 
 Unofficial app, not affiliated with Nothing Technology.
 

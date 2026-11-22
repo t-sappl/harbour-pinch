@@ -42,6 +42,8 @@ static const uint16_t RequestLatency = 0xC041;
 static const uint16_t RequestFirmware = 0xC042;
 static const uint16_t RequestEnhancedBass = 0xC04E;
 static const uint16_t RequestSuperMic = 0xC05E;
+static const uint16_t RequestEq = 0xC01F;
+static const uint16_t RequestCustomEq = 0xC044;
 
 static const uint16_t Ring = 0xF002;
 static const uint16_t SetGesture = 0xF003;
@@ -55,6 +57,8 @@ static const uint16_t SetLatency = 0xF040;
 static const uint16_t SetEnhancedBass = 0xF051;
 static const uint16_t SetSpatialAudio = 0xF052;
 static const uint16_t SetSuperMic = 0xF05F;
+static const uint16_t SetEq = 0xF010;
+static const uint16_t SetCustomEq = 0xF041;
 }
 
 namespace resp {
@@ -73,6 +77,8 @@ static const uint16_t Latency = 0x4041;
 static const uint16_t Firmware = 0x4042;
 static const uint16_t EnhancedBass = 0x404E;
 static const uint16_t SuperMic = 0x405E;
+static const uint16_t Eq = 0x401F;
+static const uint16_t CustomEq = 0x4044;
 static const uint16_t FitTestResult = 0xE00D;
 static const uint16_t DualEnable = 0x4027;
 static const uint16_t DualList = 0x4028;
@@ -108,6 +114,16 @@ enum GestureAction : uint8_t {
     ActionNoiseControlTranspOff = 21,// transparency, off
     ActionNoiseControlAncTransp = 22,// noise cancellation, transparency
     ActionMicToggle = 29
+};
+
+// Preset EQ modes (device-side values for RequestEq / SetEq). 4 is skipped
+// on the wire (reserved by the protocol, not used by any known model).
+enum EqMode : uint8_t {
+    EqBalanced = 0,
+    EqVoice = 1,
+    EqTreble = 2,
+    EqBass = 3,
+    EqCustom = 5
 };
 
 // Ear tip fit test result per side.
@@ -212,6 +228,24 @@ bool parseDualList(const Packet &packet, std::vector<DualDevice> &devices);
 // A remembered device connected or disconnected: payload[0] state, [1..6] MAC.
 bool parseDualDeviceEvent(const Packet &packet, bool &connected, uint8_t mac[6]);
 std::vector<uint8_t> dualConnectPayload(const uint8_t mac[6], bool connect);
+
+// Custom (3-band) EQ. Values are roughly -6..+6, in dB as shown by the
+// Nothing X app; the earbuds do not label a unit.
+struct CustomEq {
+    float bass = 0.0f;
+    float mid = 0.0f;
+    float treble = 0.0f;
+};
+
+// EQ preset (Balance/Voice/Treble/Bass/Custom). payload[0] is the mode.
+bool parseEq(const Packet &packet, uint8_t &mode);
+std::vector<uint8_t> setEqPayload(uint8_t mode);
+
+// Custom EQ. The wire packet is a fixed-size template for a 3-band filter
+// (ported from earctl, which has it working against real devices); only
+// the three gain values and a derived "total gain" field change.
+bool parseCustomEq(const Packet &packet, CustomEq &eq);
+std::vector<uint8_t> setCustomEqPayload(const CustomEq &eq);
 
 std::vector<uint8_t> setInEarPayload(bool enabled);
 std::vector<uint8_t> setLatencyPayload(bool lowLatency);

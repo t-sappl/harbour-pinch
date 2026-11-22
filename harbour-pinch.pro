@@ -3,7 +3,7 @@ TARGET = harbour-pinch
 CONFIG += sailfishapp sailfishapp_i18n c++11
 QT += dbus
 
-VERSION = 1.0.0
+VERSION = 1.1.0
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 SOURCES += \
@@ -34,6 +34,8 @@ DISTFILES += \
     qml/pages/FindPage.qml \
     qml/pages/FitTestPage.qml \
     qml/pages/DualConnectPage.qml \
+    qml/pages/EqPage.qml \
+    qml/pages/MorePage.qml \
     qml/components/ChoiceRow.qml \
     qml/components/BatteryItem.qml \
     qml/components/FormFactorImage.qml \
