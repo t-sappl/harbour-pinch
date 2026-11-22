@@ -4,10 +4,12 @@ Companion app for Nothing earbuds on Sailfish OS: noise control, battery,
 gestures and the other settings of the Nothing X app.
 
 <p align="center">
-  <img src="screenshots/settings1.png" width="19%" alt="Main page: battery and noise control">
-  <img src="screenshots/settings2.png" width="19%" alt="Main page: controls, connection and tools">
-  <img src="screenshots/gestures.png" width="19%" alt="Gesture control">
-  <img src="screenshots/cover.png" width="19%" alt="Cover with noise control">
+  <img src="screenshots/settings1.png" width="16%" alt="Main page: battery and noise control">
+  <img src="screenshots/settings2.png" width="16%" alt="Main page: sound, controls, connection and calls">
+  <img src="screenshots/equalizer.png" width="16%" alt="Equalizer: presets and custom sliders">
+  <img src="screenshots/more.png" width="16%" alt="More page: find my earbuds, fit test, info">
+  <img src="screenshots/gestures.png" width="16%" alt="Gesture control">
+  <img src="screenshots/cover.png" width="16%" alt="Cover with noise control">
 </p>
 
 ## Features
@@ -56,8 +58,8 @@ the only supported models.
 | Personalized noise cancellation | 🔸 | ✅ | – |
 | Battery left, right, case | ✅ | ✅ | 🔸 |
 | App cover (mode, battery, next mode) | 🔸 | ✅ | 🔸 |
-| Equalizer presets (Balanced, Voice, Treble, Bass) | 🔸 | 🔸 | 🔸 |
-| Custom equalizer (bass/mid/treble sliders) | 🔸 | 🔸 | 🔸 |
+| Equalizer presets (Balanced, Voice, Treble, Bass) | 🔸 | ✅ | 🔸 |
+| Custom equalizer (bass/mid/treble sliders) | 🔸 | ✅ | 🔸 |
 | Bass boost (5 levels) | – | ✅ | – |
 | Spatial audio | – | ✅ | – |
 | Super Mic | – |✅ | – |
@@ -69,7 +71,7 @@ the only supported models.
 | Dual connection and device list | 🔸 | ✅ | 🔸 |
 | Model, firmware, serial number | ✅ | ✅ | ✅ |
 
-Tested on a Jolla Phone with Sailfish OS 5.1, Pinch 1.0.0.
+Tested on a Jolla Phone with Sailfish OS 5.1, Pinch 1.1.0.
 
 Over-ear headphones (e.g. Headphone (1)) show one battery value instead of
 left, right and case; their button controls are not supported yet.
